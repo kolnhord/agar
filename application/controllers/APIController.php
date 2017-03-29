@@ -3,20 +3,41 @@
 	require_once('library/db.php');
 
 	class API {
+		//private functions
+		
+		private function checkAccess() {
+			/*
+			пользователь логиниться, передавая логин и пароль
+			сервер их проверяет
+			и если все ок
+				записывает в сессию,
+				а id сесии передает в куки
+			*/
+			return true;
+		}
+		
+		//public functions
+		
 		function answer() {
 			$method = $_GET['method'];
 			if ($method) {
 				if (method_exists($this, $method . 'Method')) {
-					$result = $this->{$method ."Method"}($_GET);
-					if ($result) {
+					if ($this->checkAccess()) {
+						$result = $this->{$method ."Method"}($_GET);
+						if ($result) {
+							return Array(
+								'result' => 'ok',
+								'data' => $result
+							);
+						}
 						return Array(
-							'result' => 'ok',
-							'data' => $result
+							'result' => 'error', 
+							'error' => 'Fail to execute method ' . $method
 						);
 					}
 					return Array(
-						'result' => 'error', 
-						'error' => 'Fail to execute method ' . $method
+						'result' => 'error',
+						'error' => 'You can not perform this action'
 					);
 				}
 				return Array(
@@ -29,6 +50,7 @@
 				'error' => 'Please write method name'
 			);
 		}
+		
 		
 		function authMethod($param) {
 			$nick = $param['nick'];
@@ -55,17 +77,18 @@
 		}
 		
 		function moveBallMethod($param) {
-			return false;
+			$db = new DataBase();
+			return $db->update($param['id'], $param['mass'], $param['x'], $param['y']);
 		}
 		
 		function getScoreMethod($param) {
-			return false;
+			$db = new DataBase();
+			return $db->getScore();
 		}
 		
 		function finishGameMethod($param) {
-			$token = $param['token'];
-			if (intval($token)) {
-				$id = /* Перевод token'а в id*/ $token;
+			$id = $param['id'];
+			if (intval($id)) {
 				$db = new DataBase();
 				return $db->finishGame($id);
 			}

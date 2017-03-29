@@ -114,6 +114,10 @@
 			);
 		}
 		
+		function finishGame($id_user) {
+			return $this->delBalls($id_user);
+		}
+		
 		/*function insertScore($nick, $mass) {
 			$result = mysql_query('INSERT INTO score(nick, mass) VALUES ("' .$nick .'", ' .$mass .')');
 			return $result;

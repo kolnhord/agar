@@ -63,6 +63,12 @@
 		}
 		
 		function finishGameMethod($param) {
+			$token = $param['token'];
+			if (intval($token)) {
+				$id = /* Перевод token'а в id*/ $token;
+				$db = new DataBase();
+				return $db->finishGame($id);
+			}
 			return false;
 		}
 	}

@@ -3,21 +3,6 @@
 	require_once('library/db.php');
 
 	class API {
-		//private functions
-		
-		private function checkAccess() {
-			/*
-			пользователь логиниться, передавая логин и пароль
-			сервер их проверяет
-			и если все ок
-				записывает в сессию,
-				а id сесии передает в куки
-			*/
-			return true;
-		}
-		
-		//public functions
-		
 		function answer() {
 			$method = $_GET['method'];
 			if ($method) {
@@ -51,8 +36,21 @@
 			);
 		}
 		
+		//private functions
 		
-		function authMethod($param) {
+		private function checkAccess() {
+			/*
+			пользователь логиниться, передавая логин и пароль
+			сервер их проверяет
+			и если все ок
+				записывает в сессию,
+				а id сесии передает в куки
+			*/
+			return true;
+		}
+		
+		
+		private function authMethod($param) {
 			$nick = $param['nick'];
 			$password = $param['pass'];
 			if ($nick && $password) {
@@ -62,7 +60,7 @@
 			return false;
 		}
 		
-		function startGameMethod($param) {
+		private function startGameMethod($param) {
 			$id = $param['id'];
 			if (intval($id)) {
 				$db = new DataBase();
@@ -71,22 +69,22 @@
 			return false;
 		}
 		
-		function getFieldMethod($param) {
+		private function getFieldMethod($param) {
 			$db = new DataBase();
 			return $db->getField();
 		}
 		
-		function moveBallMethod($param) {
+		private function moveBallMethod($param) {
 			$db = new DataBase();
 			return $db->update($param['id'], $param['mass'], $param['x'], $param['y']);
 		}
 		
-		function getScoreMethod($param) {
+		private function getScoreMethod($param) {
 			$db = new DataBase();
 			return $db->getScore();
 		}
 		
-		function finishGameMethod($param) {
+		private function finishGameMethod($param) {
 			$id = $param['id'];
 			if (intval($id)) {
 				$db = new DataBase();

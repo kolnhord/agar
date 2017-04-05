@@ -31,14 +31,11 @@
 		}
 		
 		private function authMethod($param) {
-			session_start();
 			$nick = $param['nick'];
-			$password = md5($param['pass']);
+			$password = $param['pass'];
 			if ($nick && $password) {
 				$db = new DataBase();
-				$user = $db->registLoginUser($nick, $password);
-				if ($user && !isset($_SESSION['user_id']) ) $_SESSION['user_id'] = $user->id;
-				return true;
+				return $db->registLoginUser($nick, $password);
 			}
 			return false;
 		}

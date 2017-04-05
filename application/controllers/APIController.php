@@ -7,22 +7,16 @@
 			$method = $_GET['method'];
 			if ($method) {
 				if (method_exists($this, $method . 'Method')) {
-					if ($this->checkAccess()) {
-						$result = $this->{$method ."Method"}($_GET);
-						if ($result) {
-							return Array(
-								'result' => 'ok',
-								'data' => $result
-							);
-						}
+					$result = $this->{$method ."Method"}($_GET);
+					if ($result) {
 						return Array(
-							'result' => 'error', 
-							'error' => 'Fail to execute method ' . $method
+							'result' => 'ok',
+							'data' => $result
 						);
 					}
 					return Array(
-						'result' => 'error',
-						'error' => 'You can not perform this action'
+						'result' => 'error', 
+						'error' => 'Fail to execute method ' . $method
 					);
 				}
 				return Array(
@@ -36,26 +30,15 @@
 			);
 		}
 		
-		//private functions
-		
-		private function checkAccess() {
-			/*
-			пользователь логиниться, передавая логин и пароль
-			сервер их проверяет
-			и если все ок
-				записывает в сессию,
-				а id сесии передает в куки
-			*/
-			return true;
-		}
-		
-		
 		private function authMethod($param) {
+			session_start();
 			$nick = $param['nick'];
-			$password = $param['pass'];
+			$password = md5($param['pass']);
 			if ($nick && $password) {
 				$db = new DataBase();
-				return $db->registLoginUser($nick, $password);
+				$user = $db->registLoginUser($nick, $password);
+				if ($user && !isset($_SESSION['user_id']) ) $_SESSION['user_id'] = $user->id;
+				return true;
 			}
 			return false;
 		}

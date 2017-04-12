@@ -7,16 +7,22 @@
 			$method = $_GET['method'];
 			if ($method) {
 				if (method_exists($this, $method . 'Method')) {
-					$result = $this->{$method ."Method"}($_GET);
-					if ($result) {
+					if ( $_GET['method'] == 'auth' || $this->checkAccess() ) {
+						$result = $this->{$method ."Method"}($_GET);
+						if ($result) {
+							return Array(
+								'result' => 'ok',
+								'data' => $result
+							);
+						}
 						return Array(
-							'result' => 'ok',
-							'data' => $result
+							'result' => 'error', 
+							'error' => 'Fail to execute method ' . $method
 						);
 					}
 					return Array(
-						'result' => 'error', 
-						'error' => 'Fail to execute method ' . $method
+						'result' => 'error',
+						'error' => 'You can not perform this action'
 					);
 				}
 				return Array(
@@ -30,22 +36,38 @@
 			);
 		}
 		
+		//private functions
+		
+		private function checkAccess() {
+			session_start();
+			if ( isset($_SESSION['hash']) && md5($_SERVER['HTTP_USER_AGENT']) === $_SESSION['hash'] )
+				return true;
+			else
+				return false;
+		}
+		
+		
 		private function authMethod($param) {
+			session_start();
 			$nick = $param['nick'];
-			$password = $param['pass'];
+			$password = md5($param['pass']);
 			if ($nick && $password) {
 				$db = new DataBase();
-				return $db->registLoginUser($nick, $password);
+				$user = $db->registLoginUser($nick, $password, md5($_SERVER['HTTP_USER_AGENT']));
+				if ($user && $password === $user->password) {
+					if (!isset($_SESSION['user_id'])) {
+						$_SESSION['user_id'] = $user->id;
+						$_SESSION['hash'] = md5($_SERVER['HTTP_USER_AGENT']);
+					}
+					return true;
+				}
 			}
 			return false;
 		}
 		
 		private function startGameMethod($param) {
-			$id = $param['id'];
-			if (intval($id)) {
-				$db = new DataBase();
-				return $db->addBall($id);
-			}
+			$db = new DataBase();
+			return $db->addBall($_SESSION['user_id']);
 			return false;
 		}
 		
@@ -56,7 +78,7 @@
 		
 		private function moveBallMethod($param) {
 			$db = new DataBase();
-			return $db->update($param['id'], $param['mass'], $param['x'], $param['y']);
+			return $db->update($_SESSION['user_id'], $param['mass'], $param['x'], $param['y']);
 		}
 		
 		private function getScoreMethod($param) {
@@ -65,11 +87,8 @@
 		}
 		
 		private function finishGameMethod($param) {
-			$id = $param['id'];
-			if (intval($id)) {
-				$db = new DataBase();
-				return $db->finishGame($id);
-			}
+			$db = new DataBase();
+			return $db->finishGame($_SESSION['user_id']);
 			return false;
 		}
 	}

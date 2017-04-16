@@ -176,13 +176,13 @@ function Graph(options) {
     function init() {
         canvas = document.createElement('canvas');
         canvas.setAttribute('id', 'myCanv');
-        canvas.setAttribute('width', '1000');
-        canvas.setAttribute('height', '800');
+        canvas.setAttribute('width', '800');
+        canvas.setAttribute('height', '600');
         context = canvas.getContext('2d');
         document.querySelector('body').appendChild(canvas);
 	vcanvas = document.createElement('canvas');
-        vcanvas.setAttribute('width', '1000');
-        vcanvas.setAttribute('height', '800');
+        vcanvas.setAttribute('width', '800');
+        vcanvas.setAttribute('height', '600');
 	vcontext = vcanvas.getContext('2d');
 	
 

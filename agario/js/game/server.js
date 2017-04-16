@@ -10,19 +10,13 @@ function Server(options) {
 	this.startGame = function (nick = null, password = '') {
 		if (nick == null) nick = 'Anonymus';
 		$.get({
-			url: "http://localhost/agario/site/api/index.php",
+			url: "./api/",
 			dataType: "json",
 			data: { 
-				method: "startGame",
-				nick: nick,
-				password: password
+				method: "startGame"
 			},
 			success: function (data, textStatus) {
-				var player = $getPlayer();
-				for (key in data.data) {
-					player[key] = data.data[key];
-				}
-				//console.log(data);
+				console.log(data);
 			}
 		});
 	}

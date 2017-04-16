@@ -50,7 +50,7 @@
 		private function authMethod($param) {
 			session_start();
 			$nick = $param['nick'];
-			$password = md5($param['pass']);
+			$password = $param['pass'];
 			if ($nick && $password) {
 				$db = new DataBase();
 				$user = $db->registLoginUser($nick, $password, md5($_SERVER['HTTP_USER_AGENT']));

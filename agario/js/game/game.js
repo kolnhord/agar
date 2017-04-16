@@ -36,7 +36,7 @@ function Game() {
     function init() {
         data.generateFood(3000, 0.2);
 		server.startGame();
-		server.getField();
+		//server.getField();
 		
     }
 

@@ -36,7 +36,7 @@
 		}
 		
 		private function addUser($nick, $password, $hash) {
-			mysqli_query($this->link, 'INSERT INTO users(nick, password, hash) VALUES ("' .$nick .'", "' .$password .'", "' .$hash .'")');
+			mysqli_query($this->link, 'INSERT INTO users(nick, password) VALUES ("' .$nick .'", "' .$password .'")');
 		}
 		
 		private function isNickUnique($nick) {
@@ -149,7 +149,8 @@
 				И шариков и пользователя?
 				Чтобы не заботиться о том, закрыл ли пользователь вкладку браузера
 			*/
-			return $this->delBalls($id_user);
+			$this->delBalls($id_user);
+			return true;
 		}
 
 	}

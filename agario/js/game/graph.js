@@ -96,8 +96,6 @@ function Graph(options) {
             vcontext.lineTo(xs, ys);
         }
         vcontext.lineTo(x + inBlock( rad * Math.cos(currAlpha) ), y + inBlock( rad * Math.sin(currAlpha) ));
-
-
         vcontext.fill();
         vcontext.lineWidth = 1.8;
         vcontext.stroke();
@@ -151,7 +149,7 @@ function Graph(options) {
 
     function render() {
 	    // 1. clear field
-        clearField();
+        clearField();	
         // 2. print food
         draw(data.getFood(), 'rgb(255, 87, 60)', 'rgb(255, 232, 220)', false, false);
         // 3. print balls
@@ -176,13 +174,13 @@ function Graph(options) {
     function init() {
         canvas = document.createElement('canvas');
         canvas.setAttribute('id', 'myCanv');
-        canvas.setAttribute('width', '1000');
-        canvas.setAttribute('height', '800');
+        canvas.setAttribute('width', '800');
+        canvas.setAttribute('height', '600');
         context = canvas.getContext('2d');
         document.querySelector('body').appendChild(canvas);
 	vcanvas = document.createElement('canvas');
-        vcanvas.setAttribute('width', '1000');
-        vcanvas.setAttribute('height', '800');
+        vcanvas.setAttribute('width', '800');
+        vcanvas.setAttribute('height', '600');
 	vcontext = vcanvas.getContext('2d');
 	
 

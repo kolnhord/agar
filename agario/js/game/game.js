@@ -1,13 +1,8 @@
 function Game() {
     var data = new Data();
     var server = new Server({
-        $getBalls:   function () { return data.getBalls(); },
-        $getFood:    function () { return data.getFood(); },
-        $getPlayer:  function () { return data.getPlayer(); },
-        $newBall:    function (name, x, y, mass, color) { data.newBall(name, x, y, mass, color ); },
-        $newFood:    function (x, y, mass) { data.newFood(x, y, mass); },
-        $deleteBall: function (ball) { data.deleteBall(ball); }
-    });
+		data: data
+	});
     //var ai = new AI({ data: data });
     function interim() {
         var ekran = data.getEkran();
@@ -24,20 +19,19 @@ function Game() {
         $renderCallback: function () {
             data.refresh();
             //ai.moveBalls();
-			
+			//server.moveBall();
         }
     });
     var input = new Input({
-        $getPlayer:     function () { return data.getPlayer(); },
-        $getEkran:      function () { return data.getEkran(); },
-        $getCanvas:     function () { return graph.getCanvas(); }
+        data: data,
+		graph: graph
     });
 
     function init() {
-        data.generateFood(3000, 0.2);
-		server.startGame();
+        data.generateFood(1000, 0.2);
+		server.startGame( {$inputGetPlayer: function () {input.getPlayer();} } );
 		server.getField();
-		
+		server.moveBall();
     }
 
     init();

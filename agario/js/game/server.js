@@ -1,64 +1,46 @@
 function Server(options) {
-    var options 	 = (options instanceof Object) ? options : {};
-    var $getBalls 	 = options.$getBalls;
-    var $newBall 	 = options.$newBall;
-    var $getPlayer   = options.$getPlayer;
-    var $deleteBall  = options.$deleteBall;
-    var $newFood     = options.$newFood;
-    var $getFood	 = options.$getFood;
+    var options	= (options instanceof Object) ? options : {};
+	var a_data = options.data;
 
-	this.startGame = function (nick = null, password = '') {
-		if (nick == null) nick = 'Anonymus';
+	this.startGame = function ( func ) {
+		var func = (func instanceof Object) ? func : {};
+		var $inputGetPlayer = func.$inputGetPlayer;
 		$.get({
-			url: "http://localhost/agario/site/api/index.php",
+			url: "./api/",
 			dataType: "json",
 			data: { 
-				method: "startGame",
-				nick: nick,
-				password: password
+				method: "startGame"
 			},
 			success: function (data, textStatus) {
-				var player = $getPlayer();
-				for (key in data.data) {
-					player[key] = data.data[key];
+				if (data && data.result == "ok" && data.data) {
+					var obj = data.data;
+					a_data.newPlayer(obj.nick, parseInt(obj.x), parseInt(obj.y), parseInt(obj.mass), obj.color);
+					$inputGetPlayer();
 				}
-				//console.log(data);
-			}
-		});
-	}
-	
-	this.getScore = function () {
-		$.get({
-			url: "http://localhost/agario/site/api/index.php",
-			dataType: "json",
-			data: { 
-				method: "getScore"
-			},
-			success: function (data, textStatus) {
-				console.log(data);
 			}
 		});
 	}
 	
 	this.moveBall = function () {
+		var player = a_data.getPlayer();
+		if (player)
 		$.get({
-			url: "http://localhost/agario/site/api/index.php",
+			url: "./api/",
 			dataType: "json",
 			data: { 
 				method: "moveBall",
-				mass: $getPlayer().getMass(),
-				x: $getPlayer().getCoord().x,
-				y: $getPlayer().getCoord().y
+				vx: player.getDXDY().vx,
+				vy: player.getDXDY().vy
 			},
 			success: function (data, textStatus) {
-				console.log(data);
+				//console.log(data);
 			}
 		});
 	}
 	
 	this.getField = function(/*x1, y1, x2, y2*/) {
 		$.get({
-			url: "http://localhost/agario/site/api/index.php",
+			url: "./api/",
 			dataType: "json",
 			data: { 
 				method: "getField"/*,
@@ -68,26 +50,45 @@ function Server(options) {
 				y2: y2*/
 			},
 			success: function (data, textStatus) {
-				//balls
-				var balls = $getBalls();
-				balls.splice(0, balls.length);
-				for (var i = 0; i < data.data.balls.length; i++) {
-					var obj = data.data.balls[i];
-					if (obj.nick != $getPlayer().name) {
-						$newBall(obj.nick, parseInt(obj.x), parseInt(obj.y), parseFloat(obj.mass), obj.color);
+				if (data && data.result == "ok" && data.data) {
+					//balls
+					var balls = a_data.getBalls();
+					//Отчищение массива от всех шариков
+					balls.splice(0, balls.length);
+					var obj = data.data.balls;
+					var player = a_data.getPlayer();
+					for (var i = 0; i < obj.length; i++) {
+						if (player && obj[i].nick == a_data.getPlayer().name) {
+							for (key in obj[i])
+								player[key] = obj[i][key];
+						} else
+							a_data.newBall(obj[i].nick, parseInt(obj[i].x), parseInt(obj[i].y), parseFloat(obj[i].mass), obj[i].color);
 					}
+					
+					//food
+					/*
+					var food = a_data.getBalls();
+					food.splice(0, food.length);
+					var obj = data.data.food;
+					for (var i = 0; i < obj.length; i++) {
+						a_data.newFood(parseInt(obj[i].x), parseInt(obj[i].y), parseFloat(obj[i].mass));
+					}*/
 				}
-				
-				//food
-				/*
-				var food = $getBalls();
-				food.splice(0, food.length);
-				for (var i = 0; i < data.data.food.length; i++) {
-					var obj = data.data.food[i];
-					$newFood(parseInt(obj.x), parseInt(obj.y), parseFloat(obj.mass));
-				}*/
 			}
 		});
 	};
+	
+	this.getScore = function () {
+		$.get({
+			url: "./api/",
+			dataType: "json",
+			data: { 
+				method: "getScore"
+			},
+			success: function (data, textStatus) {
+				console.log(data);
+			}
+		});
+	}
 
 }

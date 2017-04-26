@@ -1,3 +1,8 @@
 ﻿window.onload = function () {
-    var game = new Game();
+
+	var iface = new Interface(startGame);
+	
+	function startGame() {
+		var game = new Game();
+	}
 };

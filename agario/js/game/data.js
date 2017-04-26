@@ -67,6 +67,9 @@
         this.getCoord = function () {
             return { x: x, y: y };
         };
+        this.getDXDY = function () {
+            return { vx: vx, vy: vy };
+        };
         this.getMass = function () {
             return mass;
         };
@@ -81,8 +84,8 @@
             return 1 / Math.pow(this.getMass(), 1 / 7) / 1.7;
         };
         this.setDirection = function (xs, ys) {
-            vx = xs - x;
-            vy = ys - y;
+            vx = xs;
+            vy = ys;
             var d = Math.sqrt(vx * vx + vy * vy);
             if (d > 1) {
                 vx = vx / d;
@@ -119,19 +122,18 @@
         };
     }
 
-    var field = new Field(0, 0, 400, 400);
+    var field = new Field(0, 0, 100, 100);
     var ekran = new Field(0, 0, 30,  30 );
     var food  = [];
     var balls = [];
     
-    var player = new Ball(
-            gnicks.randomNick(), 
-            Math.random() * field.width, 
-            Math.random() * field.height, 
-            2,
-            'rgb(198, 38, 62)'
-            );
+    var player;
 
+    this.newPlayer = function(name, x, y, mass, color = "") {
+		delete player;
+        player = new Ball( name, x, y, mass, color );
+    };
+	
     this.newFood = function () {
         food.push(
         new Food(
@@ -161,17 +163,7 @@
         balls.splice(j, 1);
     }
 
-    this.newBall = function() {
-        balls.push(
-            new Ball(
-                gnicks.randomNick(), 
-                Math.random() * field.width, 
-                Math.random() * field.height, 
-                2,
-                'rgb(198, 38, 62)'
-                )
-        );
-    };
+
 
     this.newBall = function(name, x, y, mass, color = "") {
         balls.push(
@@ -180,7 +172,7 @@
                 x, 
                 y, 
                 mass,
-                'rgb(198, 38, 62)'
+				color
                 )
         );
     };
